@@ -1,4 +1,3 @@
-import { getAvailableExercises, createTraining } from './api/trainings';
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
