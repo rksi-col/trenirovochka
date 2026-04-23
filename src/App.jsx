@@ -1,3 +1,4 @@
+import { getAvailableExercises, createTraining } from './api/trainings';
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
@@ -407,13 +408,24 @@ function CreateWorkoutPage() {
   const navigate = useNavigate();
 
   const addExercise = (exercise) => {
-    if (!selectedExercises.find(e => e.exerciseId === exercise.id)) {
-      setSelectedExercises([...selectedExercises, { 
-        exerciseId: exercise.id, 
-        name: exercise.name,
-        sortId: selectedExercises.length + 1 
-      }]);
+    // Проверяем, что exercise.id существует
+    if (!exercise.id) {
+      console.error('У упражнения нет ID!', exercise);
+      return;
     }
+    
+    // Проверяем, не добавлено ли уже это упражнение
+    if (selectedExercises.find(e => e.exerciseId === exercise.id)) {
+      alert('Это упражнение уже добавлено');
+      return;
+    }
+    
+    // Добавляем упражнение с его ID
+    setSelectedExercises([...selectedExercises, { 
+      exerciseId: exercise.id,  // ← КЛЮЧЕВОЙ МОМЕНТ! ID подставляется здесь
+      name: exercise.name,
+      sortId: selectedExercises.length + 1 
+    }]);
   };
 
   const removeExercise = (exerciseId) => {
@@ -453,11 +465,17 @@ function CreateWorkoutPage() {
 
         <div className="form-group">
           <label>Добавить упражнения</label>
-          <select onChange={(e) => {
-            const ex = availableExercises.find(e => e.id === parseInt(e.target.value));
-            if (ex) addExercise(ex);
-            e.target.value = '';
-          }} style={{ marginBottom: 16 }}>
+          <select 
+            onChange={(e) => {
+              const ex = availableExercises.find(ex => ex.id === parseInt(e.target.value));
+              if (ex) {
+                console.log('Выбрано упражнение:', ex); // Проверка в консоли
+                addExercise(ex);
+              }
+              e.target.value = '';
+            }} 
+            style={{ marginBottom: 16 }}
+          >
             <option value="">-- Выберите упражнение --</option>
             {availableExercises.map(ex => (
               <option key={ex.id} value={ex.id}>{ex.name} - {ex.targetMuscle}</option>

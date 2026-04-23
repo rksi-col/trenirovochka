@@ -1,9 +1,14 @@
 import api from './axios';
+import { exercisesList } from './exercisesList';
+
+// Получить список упражнений (локально)
+export const getAvailableExercises = () => {
+  return exercisesList;
+};
 
 // Получить все тренировки пользователя
 export const getAllTrainings = async () => {
   try {
-    // Получаем текущий месяц
     const now = new Date();
     const from = new Date(now.getFullYear(), now.getMonth() - 1, 1).getTime();
     const to = new Date(now.getFullYear(), now.getMonth() + 2, 0).getTime();
@@ -12,7 +17,7 @@ export const getAllTrainings = async () => {
     return response.data;
   } catch (error) {
     if (error.response?.status === 404) {
-      return []; // Нет тренировок
+      return [];
     }
     console.error('Ошибка загрузки тренировок:', error);
     throw error;
@@ -56,35 +61,46 @@ export const getTrainingByTimestamp = async (timestamp) => {
   }
 };
 
-// Создать тренировку
+// Создать тренировку (АВТОМАТИЧЕСКИ ПОДСТАВЛЯЕТ ID УПРАЖНЕНИЙ)
 export const createTraining = async (timestamp, category, exercises) => {
   try {
-    const response = await api.post('/trainings', {
-      timestamp,
-      category,
+    // Формируем запрос с ID упражнений
+    const requestBody = {
+      timestamp: timestamp,
+      category: category,
       exercises: exercises.map((ex, index) => ({
-        exerciseId: ex.exerciseId,
+        exerciseId: ex.exerciseId,  // ← здесь подставляется ID
         sortId: ex.sortId || index + 1
       }))
-    });
+    };
+    
+    console.log('📤 Отправляем на сервер:', JSON.stringify(requestBody, null, 2));
+    
+    const response = await api.post('/trainings', requestBody);
+    console.log('✅ Ответ сервера:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Ошибка создания тренировки:', error);
+    console.error('❌ Ошибка создания тренировки:', error.response?.data || error.message);
     throw error;
   }
 };
 
-// Добавить упражнение в тренировку
+// Добавить упражнение в тренировку (АВТОМАТИЧЕСКИ ПОДСТАВЛЯЕТ ID)
 export const addExerciseToTraining = async (trainingId, exerciseId, sortId) => {
   try {
-    const response = await api.post('/trainings/exercises/add', {
-      trainingId,
-      exerciseId,
-      sortId
-    });
+    const requestBody = {
+      trainingId: trainingId,
+      exerciseId: exerciseId,  // ← здесь подставляется ID
+      sortId: sortId
+    };
+    
+    console.log('📤 Добавляем упражнение:', JSON.stringify(requestBody, null, 2));
+    
+    const response = await api.post('/trainings/exercises/add', requestBody);
+    console.log('✅ Упражнение добавлено:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Ошибка добавления упражнения:', error);
+    console.error('❌ Ошибка добавления упражнения:', error.response?.data || error.message);
     throw error;
   }
 };
@@ -93,29 +109,12 @@ export const addExerciseToTraining = async (trainingId, exerciseId, sortId) => {
 export const removeExerciseFromTraining = async (trainingId, exerciseId) => {
   try {
     const response = await api.delete('/trainings/exercises/remove', {
-      data: { trainingId, exerciseId }
+      data: { trainingId: trainingId, exerciseId: exerciseId }
     });
+    console.log('✅ Упражнение удалено');
     return response;
   } catch (error) {
-    console.error('Ошибка удаления упражнения:', error);
+    console.error('❌ Ошибка удаления упражнения:', error.response?.data || error.message);
     throw error;
   }
-};
-
-// Список доступных упражнений (локальный, так как API их не предоставляет)
-export const getAvailableExercises = () => {
-  return [
-    { id: 1, name: 'Жим лёжа', targetMuscle: 'Грудь' },
-    { id: 2, name: 'Приседания', targetMuscle: 'Ноги' },
-    { id: 3, name: 'Становая тяга', targetMuscle: 'Спина' },
-    { id: 4, name: 'Отжимания', targetMuscle: 'Грудь, Трицепс' },
-    { id: 5, name: 'Подтягивания', targetMuscle: 'Спина, Бицепс' },
-    { id: 6, name: 'Бег', targetMuscle: 'Кардио' },
-    { id: 7, name: 'Планка', targetMuscle: 'Кор' },
-    { id: 8, name: 'Выпады', targetMuscle: 'Ноги' },
-    { id: 9, name: 'Жим гантелей', targetMuscle: 'Плечи' },
-    { id: 10, name: 'Скручивания', targetMuscle: 'Пресс' },
-    { id: 11, name: 'Бурпи', targetMuscle: 'Кардио' },
-    { id: 12, name: 'Запрыгивания', targetMuscle: 'Ноги, Кардио' }
-  ];
 };
