@@ -11,27 +11,30 @@ export function Header() {
       <div className="container">
         <div className="header-top">
           <Link to="/" className="logo">
-            <i className="fas fa-spa"></i> Flowwow
+            <i className="fas fa-dumbbell"></i> TrackYourWorkout
           </Link>
           
           <nav className={`nav-main ${isMenuOpen ? 'active' : ''}`}>
             <ul>
               <li><NavLink to="/" onClick={() => setIsMenuOpen(false)}>Главная</NavLink></li>
-              <li><NavLink to="/catalog" onClick={() => setIsMenuOpen(false)}>Букеты</NavLink></li>
-              <li><NavLink to="/about" onClick={() => setIsMenuOpen(false)}>О нас</NavLink></li>
-              <li><NavLink to="/order" onClick={() => setIsMenuOpen(false)}>Заказать</NavLink></li>
               {isAuthenticated && (
-                <li><NavLink to="/admin/dashboard" onClick={() => setIsMenuOpen(false)}>Админ-панель</NavLink></li>
+                <>
+                  <li><NavLink to="/dashboard" onClick={() => setIsMenuOpen(false)}>Дашборд</NavLink></li>
+                  <li><NavLink to="/workouts" onClick={() => setIsMenuOpen(false)}>Тренировки</NavLink></li>
+                  <li><NavLink to="/calendar" onClick={() => setIsMenuOpen(false)}>Календарь</NavLink></li>
+                  <li><NavLink to="/reports" onClick={() => setIsMenuOpen(false)}>Отчеты</NavLink></li>
+                </>
               )}
             </ul>
           </nav>
           
           <div className="header-icons">
-            <a href="tel:+78005551615"><i className="fas fa-phone-alt"></i> 8‒800‒555‒16‒15</a>
-            {isAuthenticated && (
-              <button onClick={logout} className="logout-btn" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                <i className="fas fa-sign-out-alt"></i>
+            {isAuthenticated ? (
+              <button onClick={logout} className="logout-btn">
+                <i className="fas fa-sign-out-alt"></i> Выйти
               </button>
+            ) : (
+              <Link to="/login" className="btn btn-small">Войти</Link>
             )}
           </div>
           

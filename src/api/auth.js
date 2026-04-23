@@ -1,42 +1,64 @@
 import api from './axios';
 
-export const login = async (email, password) => {
+export const register = async (username, password) => {
   try {
-    const response = await api.post('/auth/login', { email, password });
-    const { token, user } = response.data;
+    const response = await api.post('/auth/register', { username, password });
+    const { token, accountId, username: userName } = response.data;
     
-    localStorage.setItem('admin_token', token);
-    localStorage.setItem('admin_user', JSON.stringify(user));
+    localStorage.setItem('token', token);
+    localStorage.setItem('accountId', accountId);
+    localStorage.setItem('username', userName);
     
-    return { token, user };
+    return { token, accountId, username: userName };
   } catch (error) {
-    console.error('Ошибка входа:', error);
-    throw error;
+    if (error.response?.data?.error === 'ALREADY_EXISTS') {
+      throw new Error('Пользователь с таким именем уже существует');
+    }
+    throw new Error('Ошибка регистрации');
+  }
+};
+
+export const login = async (username, password) => {
+  try {
+    const response = await api.post('/auth/login', { username, password });
+    const { token, accountId, username: userName } = response.data;
+    
+    localStorage.setItem('token', token);
+    localStorage.setItem('accountId', accountId);
+    localStorage.setItem('username', userName);
+    
+    return { token, accountId, username: userName };
+  } catch (error) {
+    if (error.response?.status === 404) {
+      throw new Error('Пользователь не найден');
+    }
+    throw new Error('Ошибка входа');
   }
 };
 
 export const logout = () => {
-  localStorage.removeItem('admin_token');
-  localStorage.removeItem('admin_user');
+  localStorage.removeItem('token');
+  localStorage.removeItem('accountId');
+  localStorage.removeItem('username');
 };
 
 export const checkAuth = () => {
-  const token = localStorage.getItem('admin_token');
-  const user = localStorage.getItem('admin_user');
+  const token = localStorage.getItem('token');
+  const accountId = localStorage.getItem('accountId');
+  const username = localStorage.getItem('username');
   
-  if (token && user) {
-    try {
-      const parsedUser = JSON.parse(user);
-      return { isAuthenticated: true, user: parsedUser };
-    } catch {
-      return { isAuthenticated: false, user: null };
-    }
+  if (token && accountId) {
+    return { 
+      isAuthenticated: true, 
+      user: { id: accountId, name: username, username } 
+    };
   }
   
   return { isAuthenticated: false, user: null };
 };
 
 export const getCurrentUser = () => {
-  const user = localStorage.getItem('admin_user');
-  return user ? JSON.parse(user) : null;
+  const accountId = localStorage.getItem('accountId');
+  const username = localStorage.getItem('username');
+  return accountId ? { id: accountId, username } : null;
 };

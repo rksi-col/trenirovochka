@@ -1,38 +1,51 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 export function Footer() {
+  const { isAuthenticated } = useAuth();
+
   return (
     <footer>
       <div className="container">
         <div className="footer-content">
           <div className="footer-column">
-            <h3>Магазин</h3>
+            <h3>TrackYourWorkout</h3>
             <ul>
               <li><Link to="/">Главная</Link></li>
-              <li><Link to="/catalog">Букеты</Link></li>
-              <li><Link to="/about">О нас</Link></li>
-              <li><Link to="/order">Заказать</Link></li>
+              {isAuthenticated ? (
+                <>
+                  <li><Link to="/dashboard">Дашборд</Link></li>
+                  <li><Link to="/workouts">Тренировки</Link></li>
+                  <li><Link to="/calendar">Календарь</Link></li>
+                  <li><Link to="/reports">Отчеты</Link></li>
+                </>
+              ) : (
+                <>
+                  <li><Link to="/login">Войти</Link></li>
+                  <li><Link to="/register">Регистрация</Link></li>
+                </>
+              )}
             </ul>
           </div>
           <div className="footer-column">
             <h3>Контакты</h3>
             <ul>
-              <li>г. Ростов-на-Дону</li>
-              <li>8‒800‒555‒16‒15</li>
-              <li>info@flower.ru</li>
+              <li>Email: support@trackworkout.com</li>
+              <li>Телефон: +7 (999) 123-45-67</li>
             </ul>
           </div>
           <div className="footer-column">
-            <h3>Часы работы</h3>
+            <h3>О проекте</h3>
             <ul>
-              <li>Пн-Пт: 9:00 - 20:00</li>
-              <li>Сб-Вс: 10:00 - 18:00</li>
+              <li>Отслеживайте тренировки</li>
+              <li>Анализируйте прогресс</li>
+              <li>Достигайте новых целей</li>
             </ul>
           </div>
         </div>
         <div className="copyright">
-          <p>© 2025 Flowwow. Все права защищены.</p>
+          <p>© 2025 TrackYourWorkout. Все права защищены.</p>
         </div>
       </div>
     </footer>
