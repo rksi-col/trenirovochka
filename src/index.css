@@ -73,7 +73,7 @@ nav a {
   color: #333;
   font-weight: 500;
   font-size: 16px;
-  padding: 8px 0;
+  padding: 8px 8px;
   transition: color 0.2s;
 }
 
@@ -519,6 +519,7 @@ main {
   
   nav {
     display: none;
+
   }
   
   nav.active {
@@ -547,6 +548,7 @@ main {
     text-align: center;
     padding: 10px;
   }
+
   
   .hamburger {
     display: block;

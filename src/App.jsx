@@ -1,4 +1,4 @@
-import { getAvailableExercises, createTraining } from './api/trainings';
+// import { getAvailableExercises, createTraining } from './api/trainings';
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
@@ -12,6 +12,7 @@ import {
   getAvailableExercises,
   getTrainingsByDay
 } from './api/trainings';
+import {ReportsPage} from "./pages/ReportsPage.jsx";
 
 // ============ СТРАНИЦА ВХОДА ============
 function LoginPage() {
@@ -665,66 +666,66 @@ function CalendarPage() {
 }
 
 // ============ ОТЧЕТЫ ============
-function ReportsPage() {
-  const [trainings, setTrainings] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadTrainings();
-  }, []);
-
-  const loadTrainings = async () => {
-    try {
-      const data = await getAllTrainings();
-      setTrainings(data || []);
-    } catch (error) {
-      console.error('Ошибка:', error);
-      setTrainings([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const totalTrainings = trainings.length;
-  const totalExercises = trainings.reduce((sum, t) => sum + (t.exercises?.length || 0), 0);
-  
-  const categoryStats = {};
-  trainings.forEach(t => {
-    categoryStats[t.category] = (categoryStats[t.category] || 0) + 1;
-  });
-
-  if (loading) return <div className="loader-container"><div className="loader"></div></div>;
-
-  return (
-    <div className="container" style={{ paddingTop: 40, paddingBottom: 40 }}>
-      <h1>Отчеты</h1>
-      <div className="stats-grid">
-        <div className="stat-card">
-          <span className="stat-icon">📊</span>
-          <div><h3>Всего тренировок</h3><p className="stat-number">{totalTrainings}</p></div>
-        </div>
-        <div className="stat-card">
-          <span className="stat-icon">💪</span>
-          <div><h3>Всего упражнений</h3><p className="stat-number">{totalExercises}</p></div>
-        </div>
-      </div>
-
-      <div className="card">
-        <h3>Статистика по категориям</h3>
-        {Object.keys(categoryStats).length === 0 ? (
-          <p>Нет данных</p>
-        ) : (
-          Object.entries(categoryStats).map(([cat, count]) => (
-            <div key={cat} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid #e2e8f0' }}>
-              <span>{cat}</span>
-              <span style={{ fontWeight: 'bold' }}>{count} тренировок</span>
-            </div>
-          ))
-        )}
-      </div>
-    </div>
-  );
-}
+// function ReportsPage() {
+//   const [trainings, setTrainings] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//
+//   useEffect(() => {
+//     loadTrainings();
+//   }, []);
+//
+//   const loadTrainings = async () => {
+//     try {
+//       const data = await getAllTrainings();
+//       setTrainings(data || []);
+//     } catch (error) {
+//       console.error('Ошибка:', error);
+//       setTrainings([]);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+//
+//   const totalTrainings = trainings.length;
+//   const totalExercises = trainings.reduce((sum, t) => sum + (t.exercises?.length || 0), 0);
+//
+//   const categoryStats = {};
+//   trainings.forEach(t => {
+//     categoryStats[t.category] = (categoryStats[t.category] || 0) + 1;
+//   });
+//
+//   if (loading) return <div className="loader-container"><div className="loader"></div></div>;
+//
+//   return (
+//     <div className="container" style={{ paddingTop: 40, paddingBottom: 40 }}>
+//       <h1>Отчеты</h1>
+//       <div className="stats-grid">
+//         <div className="stat-card">
+//           <span className="stat-icon">📊</span>
+//           <div><h3>Всего тренировок</h3><p className="stat-number">{totalTrainings}</p></div>
+//         </div>
+//         <div className="stat-card">
+//           <span className="stat-icon">💪</span>
+//           <div><h3>Всего упражнений</h3><p className="stat-number">{totalExercises}</p></div>
+//         </div>
+//       </div>
+//
+//       <div className="card">
+//         <h3>Статистика по категориям</h3>
+//         {Object.keys(categoryStats).length === 0 ? (
+//           <p>Нет данных</p>
+//         ) : (
+//           Object.entries(categoryStats).map(([cat, count]) => (
+//             <div key={cat} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid #e2e8f0' }}>
+//               <span>{cat}</span>
+//               <span style={{ fontWeight: 'bold' }}>{count} тренировок</span>
+//             </div>
+//           ))
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
 
 // ============ ОСНОВНОЙ КОМПОНЕНТ ============
 function App() {
