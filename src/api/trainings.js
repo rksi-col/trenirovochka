@@ -69,8 +69,8 @@ export const createTraining = async (timestamp, category, exercises) => {
       timestamp: timestamp,
       category: category,
       exercises: exercises.map((ex, index) => ({
-        exerciseId: ex.exerciseId,  // ← здесь подставляется ID
-        sortId: ex.sortId || index + 1
+        exercise_id: ex.exerciseId,  // ← здесь подставляется ID
+        sort_id: ex.sortId || index + 1
       }))
     };
     
@@ -89,9 +89,9 @@ export const createTraining = async (timestamp, category, exercises) => {
 export const addExerciseToTraining = async (trainingId, exerciseId, sortId) => {
   try {
     const requestBody = {
-      trainingId: trainingId,
-      exerciseId: exerciseId,  // ← здесь подставляется ID
-      sortId: sortId
+      training_id: trainingId,
+      exercise_id: exerciseId,  // ← здесь подставляется ID
+      sort_id: sortId
     };
     
     console.log('📤 Добавляем упражнение:', JSON.stringify(requestBody, null, 2));
@@ -109,7 +109,7 @@ export const addExerciseToTraining = async (trainingId, exerciseId, sortId) => {
 export const removeExerciseFromTraining = async (trainingId, exerciseId) => {
   try {
     const response = await api.delete('/trainings/exercises/remove', {
-      data: { trainingId: trainingId, exerciseId: exerciseId }
+      data: { training_id: trainingId, exercise_id: exerciseId }
     });
     console.log('✅ Упражнение удалено');
     return response;

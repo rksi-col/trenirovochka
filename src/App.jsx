@@ -1,4 +1,4 @@
-import { getAvailableExercises, createTraining } from './api/trainings';
+// import { getAvailableExercises, createTraining } from './api/trainings';
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
@@ -441,6 +441,7 @@ function CreateWorkoutPage() {
 
     setLoading(true);
     try {
+        console.log(selectedExercises + " CREATE WORKOUT");
       await createTraining(Date.now(), category, selectedExercises);
       navigate('/workouts');
     } catch (error) {
@@ -523,6 +524,7 @@ function WorkoutDetailPage() {
   const loadTraining = async () => {
     try {
       const data = await getTrainingByTimestamp(parseInt(timestamp));
+        console.log('📥 Ответ сервера:', data);
       setTraining(data);
     } catch (error) {
       console.error('Ошибка:', error);
@@ -536,6 +538,7 @@ function WorkoutDetailPage() {
     if (!selectedExerciseId) return;
     setAddingExercise(true);
     try {
+        console.log('добавляем упражнение с exerciseId:', selectedExerciseId);
       await addExerciseToTraining(training.id, parseInt(selectedExerciseId), (training.exercises?.length || 0) + 1);
       await loadTraining();
       setSelectedExerciseId('');
@@ -548,6 +551,7 @@ function WorkoutDetailPage() {
 
   const handleRemoveExercise = async (exerciseId) => {
     try {
+        console.log('🗑️ Удаляем упражнение с exerciseId:', exerciseId);
       await removeExerciseFromTraining(training.id, exerciseId);
       await loadTraining();
     } catch (error) {
@@ -586,7 +590,7 @@ function WorkoutDetailPage() {
               <h4>{ex.name}</h4>
               <p>{ex.targetMuscle}</p>
             </div>
-            <button onClick={() => handleRemoveExercise(ex.id)} className="icon-btn delete">🗑️</button>
+            <button onClick={() => handleRemoveExercise(ex.exerciseId || ex.id)} className="icon-btn delete">🗑️</button>
           </div>
         ))
       )}
